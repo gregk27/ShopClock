@@ -4,9 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -21,9 +25,12 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
 
     private ViewHolder selectedCard = null;
 
-    public PersonCardAdapter(Context context, ArrayList<Person> people) {
+    private final ClockOutListener clockButtonCallback;
+
+    public PersonCardAdapter(Context context, ArrayList<Person> people, ClockOutListener clockButtonCallback) {
         this.context = context;
         this.people = people;
+        this.clockButtonCallback = clockButtonCallback;
     }
 
     @NonNull
@@ -48,6 +55,10 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
             holder.expandedView.setVisibility(View.VISIBLE);
             selectedCard = holder;
         });
+
+        holder.clockButton.setOnClickListener((View v) -> {
+            clockButtonCallback.clockButtonClicked(person);
+        });
     }
 
     @Override
@@ -58,10 +69,17 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameView;
         public View expandedView;
+
+        public Button clockButton;
         public ViewHolder(@NonNull View view){
             super(view);
             nameView = view.findViewById(R.id.nameView);
             expandedView = view.findViewById(R.id.expandedView);
+            clockButton = view.findViewById(R.id.clockInButton);
         }
+    }
+
+    public interface ClockOutListener {
+        void clockButtonClicked(Person person);
     }
 }

@@ -20,6 +20,8 @@ public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
 
+    private PersonCardAdapter adapter;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         DashboardViewModel dashboardViewModel =
@@ -38,7 +40,10 @@ public class DashboardFragment extends Fragment {
         people.add(new Person("Person 7", -1, System.currentTimeMillis(), false));
         people.add(new Person("Person 8", -1, System.currentTimeMillis(), false));
 
-        PersonCardAdapter adapter = new PersonCardAdapter(getContext(), people);
+        adapter = new PersonCardAdapter(getContext(), people, (Person person) -> {
+            people.remove(person);
+            adapter.notifyDataSetChanged();
+        });
 
         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
