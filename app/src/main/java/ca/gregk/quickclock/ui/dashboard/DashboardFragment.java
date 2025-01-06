@@ -6,10 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import ca.gregk.quickclock.Person;
 import ca.gregk.quickclock.databinding.FragmentDashboardBinding;
+import ca.gregk.quickclock.ui.personcard.PersonCardAdapter;
 
 public class DashboardFragment extends Fragment {
 
@@ -23,8 +28,19 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        ArrayList<Person> people = new ArrayList<Person>();
+        people.add(new Person("Person 1", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 2", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 3", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 4", -1, System.currentTimeMillis(), false));
+
+        PersonCardAdapter adapter = new PersonCardAdapter(getContext(), people);
+
+        LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+        binding.recycler.setLayoutManager(layout);
+        binding.recycler.setAdapter(adapter);
+
         return root;
     }
 
