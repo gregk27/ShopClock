@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.gregk.quickclock.Person;
 import ca.gregk.quickclock.R;
@@ -17,6 +18,8 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
 
     private final Context context;
     private final ArrayList<Person> people;
+
+    private ViewHolder selectedCard = null;
 
     public PersonCardAdapter(Context context, ArrayList<Person> people) {
         this.context = context;
@@ -28,6 +31,7 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
     public PersonCardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // to inflate the layout for each item of recycler view.
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_person_card, parent, false);
+
         return new ViewHolder(view);
     }
 
@@ -35,6 +39,15 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position){
         Person person = people.get(position);
         holder.nameView.setText(person.name);
+
+        holder.expandedView.setVisibility(View.GONE);
+
+        holder.itemView.setOnClickListener((View v) -> {
+            if(selectedCard != null)
+                selectedCard.expandedView.setVisibility(View.GONE);
+            holder.expandedView.setVisibility(View.VISIBLE);
+            selectedCard = holder;
+        });
     }
 
     @Override
@@ -44,9 +57,11 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameView;
+        public View expandedView;
         public ViewHolder(@NonNull View view){
             super(view);
             nameView = view.findViewById(R.id.nameView);
+            expandedView = view.findViewById(R.id.expandedView);
         }
     }
 }

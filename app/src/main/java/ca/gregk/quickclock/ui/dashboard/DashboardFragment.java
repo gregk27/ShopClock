@@ -33,6 +33,10 @@ public class DashboardFragment extends Fragment {
         people.add(new Person("Person 2", -1, System.currentTimeMillis(), false));
         people.add(new Person("Person 3", -1, System.currentTimeMillis(), false));
         people.add(new Person("Person 4", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 5", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 6", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 7", -1, System.currentTimeMillis(), false));
+        people.add(new Person("Person 8", -1, System.currentTimeMillis(), false));
 
         PersonCardAdapter adapter = new PersonCardAdapter(getContext(), people);
 
