@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "245014986733",
+    "project_id": "shopclock-62230",
+    "storage_bucket": "shopclock-62230.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245014986733:android:ab37d8096a47bbe79af1e4",
+        "android_client_info": {
+          "package_name": "ca.gregk.quickclock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfzJqo6PPF4xpDESpKYofSk4XugpgWvrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
