@@ -1,19 +1,26 @@
 package ca.gregk.quickclock;
 
+import com.google.firebase.firestore.DocumentId;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class Person {
-    public final String name;
-    public final long clockIn;
-    public final long totalTime;
-    public final boolean isClockedIn;
 
-    public Person(String name, long clockIn, long totalTime, boolean isClockedIn){
+    @DocumentId
+    public String ID;
+    public String name;
+    public long totalTime;
+    public boolean clockedIn;
+
+    public Person(){
+
+    }
+
+    public Person(String name, boolean clockedIn, long totalTime){
         this.name = name;
-        this.clockIn = clockIn;
         this.totalTime = totalTime;
-        this.isClockedIn = isClockedIn;
+        this.clockedIn = clockedIn;
     }
 }

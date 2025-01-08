@@ -6,9 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SnapshotListenOptions;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +37,10 @@ public class DashboardFragment extends Fragment {
 
     private PersonCardAdapter adapter;
 
+    private CollectionReference database;
+
+    ArrayList<Person> people;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         DashboardViewModel dashboardViewModel =
@@ -30,20 +49,18 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        ArrayList<Person> people = new ArrayList<Person>();
-        people.add(new Person("Person 1", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 2", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 3", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 4", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 5", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 6", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 7", -1, System.currentTimeMillis(), false));
-        people.add(new Person("Person 8", -1, System.currentTimeMillis(), false));
+        people = new ArrayList<>();
+
+        FirebaseFirestore instance = FirebaseFirestore.getInstance();
+        database = instance.collection("/People");
 
         adapter = new PersonCardAdapter(getContext(), people, (Person person) -> {
-            people.remove(person);
-            adapter.notifyDataSetChanged();
+            // Switch person to clocked in
+            person.clockedIn = true;
+            database.document(person.ID).set(person);
         });
+
+        database.orderBy("name").addSnapshotListener(this::onPeopleChanged);
 
         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
@@ -51,6 +68,21 @@ public class DashboardFragment extends Fragment {
         binding.recycler.setAdapter(adapter);
 
         return root;
+    }
+
+    private void onPeopleChanged(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+        // When data changes, then update list of people
+        // Currently this just updates everyone at once, could make it more efficient later
+        if (value != null){
+            people.clear();
+            for(DocumentSnapshot document : value.getDocuments()){
+                Person person = document.toObject(Person.class);
+                if(!person.clockedIn){
+                    people.add(person);
+                }
+            }
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
