@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,13 +22,13 @@ import ca.gregk.quickclock.R;
 public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.ViewHolder> {
 
     private final Context context;
-    private final ArrayList<Person> people;
+    private final List<Person> people;
 
     private ViewHolder selectedCard = null;
 
     private final ClockOutListener clockButtonCallback;
 
-    public PersonCardAdapter(Context context, ArrayList<Person> people, ClockOutListener clockButtonCallback) {
+    public PersonCardAdapter(Context context, List<Person> people, ClockOutListener clockButtonCallback) {
         this.context = context;
         this.people = people;
         this.clockButtonCallback = clockButtonCallback;

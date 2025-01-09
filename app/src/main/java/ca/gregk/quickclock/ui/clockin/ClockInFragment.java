@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,12 +29,9 @@ import ca.gregk.quickclock.ui.personcard.PersonCardAdapter;
 public class ClockInFragment extends Fragment {
 
     private FragmentClockInBinding binding;
-
     private PersonCardAdapter adapter;
 
-    private CollectionReference peopleDB, sessionDB;
-
-    ArrayList<Person> people;
+    List<Person> people;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,50 +41,22 @@ public class ClockInFragment extends Fragment {
         binding = FragmentClockInBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        people = new ArrayList<>();
+        people = clockInViewModel.getPeople().getValue();
 
-        FirebaseFirestore instance = FirebaseFirestore.getInstance();
-        peopleDB = instance.collection("/People");
-        sessionDB = instance.collection("/Sessions");
-
-        adapter = new PersonCardAdapter(getContext(), people, (Person person) -> {
-            // Create a session and assign it to the person
-            Session session = new Session(person).clockIn();
-            sessionDB.add(session)
-                    .addOnSuccessListener(sessionDocument -> {
-                            person.currentSession = sessionDocument;
-                            peopleDB.document(person.ID.getId()).set(person);
-                        }
-                    )
-                    .addOnFailureListener(err -> {
-                        Toast.makeText(getContext(), "Error creating session", Toast.LENGTH_LONG)
-                                .show();
-                    });
-        });
-
-        peopleDB.orderBy("name").addSnapshotListener(this::onPeopleChanged);
+        adapter = new PersonCardAdapter(getContext(), people, person -> clockInViewModel.clockIn(person, getContext()));
 
         LinearLayoutManager layout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         binding.recycler.setLayoutManager(layout);
         binding.recycler.setAdapter(adapter);
 
-        return root;
-    }
-
-    private void onPeopleChanged(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-        // When data changes, then update list of people
-        // Currently this just updates everyone at once, could make it more efficient later
-        if (value != null){
+        clockInViewModel.getPeople().observe(getViewLifecycleOwner(), ppl -> {
             people.clear();
-            for(DocumentSnapshot document : value.getDocuments()){
-                Person person = document.toObject(Person.class);
-                if(!person.isClockedIn()){
-                    people.add(person);
-                }
-            }
+            people.addAll(ppl);
             adapter.notifyDataSetChanged();
-        }
+        });
+
+        return root;
     }
 
     @Override
