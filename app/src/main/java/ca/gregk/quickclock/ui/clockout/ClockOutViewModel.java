@@ -1,14 +1,14 @@
-package ca.gregk.quickclock.ui.notifications;
+package ca.gregk.quickclock.ui.clockout;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class NotificationsViewModel extends ViewModel {
+public class ClockOutViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public NotificationsViewModel() {
+    public ClockOutViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is notifications fragment");
     }

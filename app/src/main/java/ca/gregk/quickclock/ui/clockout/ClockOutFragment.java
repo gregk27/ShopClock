@@ -1,4 +1,4 @@
-package ca.gregk.quickclock.ui.notifications;
+package ca.gregk.quickclock.ui.clockout;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,22 +9,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import ca.gregk.quickclock.databinding.FragmentNotificationsBinding;
+import ca.gregk.quickclock.databinding.FragmentClockOutBinding;
 
-public class NotificationsFragment extends Fragment {
+public class ClockOutFragment extends Fragment {
 
-    private FragmentNotificationsBinding binding;
+    private FragmentClockOutBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+        ClockOutViewModel clockOutViewModel =
+                new ViewModelProvider(this).get(ClockOutViewModel.class);
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentClockOutBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textNotifications;
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        clockOutViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

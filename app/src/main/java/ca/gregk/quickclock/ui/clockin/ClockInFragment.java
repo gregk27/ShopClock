@@ -1,4 +1,4 @@
-package ca.gregk.quickclock.ui.dashboard;
+package ca.gregk.quickclock.ui.clockin;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,12 +21,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import ca.gregk.quickclock.Person;
 import ca.gregk.quickclock.Session;
-import ca.gregk.quickclock.databinding.FragmentDashboardBinding;
+import ca.gregk.quickclock.databinding.FragmentClockInBinding;
 import ca.gregk.quickclock.ui.personcard.PersonCardAdapter;
 
-public class DashboardFragment extends Fragment {
+public class ClockInFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentClockInBinding binding;
 
     private PersonCardAdapter adapter;
 
@@ -36,10 +36,10 @@ public class DashboardFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        ClockInViewModel clockInViewModel =
+                new ViewModelProvider(this).get(ClockInViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentClockInBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         people = new ArrayList<>();
