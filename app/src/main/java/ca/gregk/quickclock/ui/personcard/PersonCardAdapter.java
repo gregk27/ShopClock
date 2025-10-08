@@ -60,6 +60,12 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
         holder.clockButton.setOnClickListener((View v) -> {
             clockButtonCallback.clockButtonClicked(person);
         });
+
+        if (person.isClockedIn()){
+            holder.clockButton.setText("Clock Out");
+        } else {
+            holder.clockButton.setText("Clock In");
+        }
     }
 
     @Override
