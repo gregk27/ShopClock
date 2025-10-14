@@ -41,7 +41,12 @@ public class ClockInFragment extends Fragment {
         binding = FragmentClockInBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        people = clockInViewModel.getPeople().getValue();
+        // Initialize local copy of people
+        // Copy data over so mutating later doesn't alter the master data
+        people = new ArrayList<>();
+        List<Person> tmp = clockInViewModel.getPeople().getValue();
+        if (tmp != null)
+            people.addAll(tmp);
 
         adapter = new PersonCardAdapter(getContext(), people, person -> clockInViewModel.clockIn(person, getContext()));
 

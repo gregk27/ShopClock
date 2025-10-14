@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -31,7 +32,12 @@ public class ClockOutFragment extends Fragment {
         binding = FragmentClockOutBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        people = clockOutViewModel.getPeople().getValue();
+        // Initialize local copy of people
+        // Copy data over so mutating later doesn't alter the master data
+        people = new ArrayList<>();
+        List<Person> tmp = clockOutViewModel.getPeople().getValue();
+        if (tmp != null)
+            people.addAll(tmp);
 
         adapter = new PersonCardAdapter(getContext(), people, person -> clockOutViewModel.clockOut(person, getContext()));
 
