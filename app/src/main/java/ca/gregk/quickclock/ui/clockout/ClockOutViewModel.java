@@ -21,8 +21,10 @@ public class ClockOutViewModel extends ViewModel {
     }
 
     public void clockOut(Person person, Context context){
-        Toast.makeText(context, "Clock out not implemented", Toast.LENGTH_LONG)
-                .show();
+        FirebaseDB.getInstance().clockOut(person, err -> {
+            Toast.makeText(context, "Error creating session", Toast.LENGTH_LONG)
+                    .show();
+        });
     }
 
     public LiveData<List<Person>> getPeople() {

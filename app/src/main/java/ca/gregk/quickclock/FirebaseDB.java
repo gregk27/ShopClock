@@ -82,4 +82,32 @@ public class FirebaseDB {
         if (failureListener != null)
             task.addOnFailureListener(failureListener);
     }
+
+    public void clockOut(Person person, @Nullable OnFailureListener failureListener){
+        // If the persson doesn't have a session, then they're already clocked out
+        DocumentReference sessionDoc = person.currentSession;
+        if (sessionDoc == null)
+            return;
+
+        // Get the person's session object
+        Task<DocumentSnapshot> task = sessionDoc.get()
+                .addOnSuccessListener(snapshot -> {
+            // Convert to instance
+            Session session = snapshot.toObject(Session.class);
+            if (session == null)
+                return;
+            // Apply the clock out
+            session.clockOut();
+
+            // Update document
+            sessionCollection.document(session.ID.getId()).set(session);
+        });
+
+        // Clear current session
+        person.currentSession = null;
+        peopleCollection.document(person.ID.getId()).set(person);
+
+        if (failureListener != null)
+            task.addOnFailureListener(failureListener);
+    }
 }

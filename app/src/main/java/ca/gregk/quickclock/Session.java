@@ -2,11 +2,14 @@ package ca.gregk.quickclock;
 
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 
 import androidx.annotation.Nullable;
 
 public class Session {
+    @DocumentId
+    public DocumentReference ID;
     public DocumentReference person;
     @Nullable
     public Timestamp start;
