@@ -25,6 +25,9 @@ public class HomeFragment extends Fragment {
 
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        homeViewModel.getAmPm().observe(getViewLifecycleOwner(), binding.amPmView::setText);
+        homeViewModel.getTime().observe(getViewLifecycleOwner(), binding.clockView::setText);
+        homeViewModel.getDate().observe(getViewLifecycleOwner(), binding.dateText::setText);
         return root;
     }
 
