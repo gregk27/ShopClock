@@ -19,4 +19,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/clockView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="12:00"
+        android:textColor="@android:color/secondary_text_dark"
+        android:textSize="96sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Friday, October 17 2025"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/clockView"
+        app:layout_constraintStart_toStartOf="@+id/clockView"
+        app:layout_constraintTop_toBottomOf="@+id/clockView" />
+
+    <TextView
+        android:id="@+id/amPmView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="AM"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/clockView"
+        app:layout_constraintStart_toEndOf="@+id/clockView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
