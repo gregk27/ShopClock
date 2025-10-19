@@ -1,11 +1,8 @@
 package ca.gregk.quickclock;
 
-import android.app.people.PeopleManager;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -55,18 +52,28 @@ public class FirebaseDB {
         // When data changes, then update list of people
         // Currently this just updates everyone at once, could make it more efficient later
         if (value != null){
+            // List of tasks being waited on to query relationships
+            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+
             ArrayList<Person> clockedIn = new ArrayList<>();
             ArrayList<Person> clockedOut = new ArrayList<>();
             for(DocumentSnapshot document : value.getDocuments()){
                 Person person = document.toObject(Person.class);
                 if(person.isClockedIn()){
                     clockedIn.add(person);
+                    // Add a task to query the person's session
+                    tasks.add(person.sessionRef.get().addOnSuccessListener(documentSnapshot -> person.sessionInstance = documentSnapshot.toObject(Session.class)));
                 } else {
+                    // No extra query needed if clocked out
                     clockedOut.add(person);
                 }
             }
-            peopleClockedIn.setValue(clockedIn);
-            peopleClockedOut.setValue(clockedOut);
+
+            // Wait for all outstanding tasks, then update application
+            Tasks.whenAll().addOnCompleteListener(task -> {
+                peopleClockedIn.setValue(clockedIn);
+                peopleClockedOut.setValue(clockedOut);
+            });
         }
     }
 
@@ -75,7 +82,7 @@ public class FirebaseDB {
         Session session = new Session(person).clockIn();
         Task<DocumentReference> task = sessionCollection.add(session)
                 .addOnSuccessListener(sessionDocument -> {
-                            person.currentSession = sessionDocument;
+                            person.setSession(sessionDocument, session);
                             peopleCollection.document(person.ID.getId()).set(person);
                         }
                 );
@@ -85,7 +92,7 @@ public class FirebaseDB {
 
     public void clockOut(Person person, @Nullable OnFailureListener failureListener){
         // If the persson doesn't have a session, then they're already clocked out
-        DocumentReference sessionDoc = person.currentSession;
+        DocumentReference sessionDoc = person.sessionRef;
         if (sessionDoc == null)
             return;
 
@@ -104,7 +111,7 @@ public class FirebaseDB {
         });
 
         // Clear current session
-        person.currentSession = null;
+        person.setSession(null, null);
         peopleCollection.document(person.ID.getId()).set(person);
 
         if (failureListener != null)

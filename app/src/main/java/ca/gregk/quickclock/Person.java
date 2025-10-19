@@ -1,14 +1,11 @@
 package ca.gregk.quickclock;
 
+import com.google.firebase.database.PropertyName;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Exclude;
-import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 
 public class Person {
 
@@ -17,20 +14,28 @@ public class Person {
     public String name;
     public long totalTime;
     @Nullable
-    public DocumentReference currentSession = null;
+    @PropertyName("currentSession")
+    public DocumentReference sessionRef = null;
+    @Exclude @Nullable
+    public Session sessionInstance = null;
 
     public Person(){
 
     }
 
-    public Person(String name, @Nullable DocumentReference currentSession, long totalTime){
+    public Person(String name, @Nullable DocumentReference sessionRef, long totalTime){
         this.name = name;
         this.totalTime = totalTime;
-        this.currentSession = currentSession;
+        this.sessionRef = sessionRef;
     }
 
     @Exclude
     public boolean isClockedIn(){
-        return currentSession != null;
+        return sessionRef != null;
+    }
+
+    public void setSession(DocumentReference document, Session instance){
+        sessionRef = document;
+        sessionInstance = instance;
     }
 }
