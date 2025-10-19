@@ -5,6 +5,8 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.time.Duration;
+
 import androidx.annotation.Nullable;
 
 public class Session {
@@ -34,5 +36,22 @@ public class Session {
         if(start != null)
             end = Timestamp.now();
         return this;
+    }
+
+    public Duration computeDuration(){
+        long startMS, endMS;
+
+        // Compute start and end times
+        if (start == null)
+            startMS = 0;
+        else
+            startMS = start.toDate().getTime();
+
+        if (end == null)
+            endMS = System.currentTimeMillis();
+        else
+            endMS = end.toDate().getTime();
+
+        return Duration.ofMillis(endMS - startMS);
     }
 }

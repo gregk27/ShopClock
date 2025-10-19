@@ -1,20 +1,16 @@
 package ca.gregk.quickclock.ui.personcard;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.gregk.quickclock.Person;
 import ca.gregk.quickclock.R;
@@ -27,6 +23,8 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
     private ViewHolder selectedCard = null;
 
     private final ClockOutListener clockButtonCallback;
+
+    private Handler updateHandler = new Handler();
 
     public PersonCardAdapter(Context context, List<Person> people, ClockOutListener clockButtonCallback) {
         this.context = context;
@@ -47,6 +45,11 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position){
         Person person = people.get(position);
         holder.nameView.setText(person.name);
+
+        // If the person is clocked in, create an updater to manage the session time view
+        if (person.isClockedIn()) {
+            new ClockUpdater(person, holder);
+        }
 
         holder.expandedView.setVisibility(View.GONE);
 
@@ -76,13 +79,33 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameView;
         public View expandedView;
+        public TextView sessionTimeView;
 
         public Button clockButton;
         public ViewHolder(@NonNull View view){
             super(view);
             nameView = view.findViewById(R.id.nameView);
             expandedView = view.findViewById(R.id.expandedView);
+            sessionTimeView = view.findViewById(R.id.sessionTimeView);
             clockButton = view.findViewById(R.id.clockInButton);
+        }
+    }
+
+    private class ClockUpdater {
+        private final Person person;
+        private final ViewHolder holder;
+
+        public ClockUpdater(Person person, ViewHolder holder){
+            this.person = person;
+            this.holder = holder;
+            update();
+        }
+
+        private void update(){
+            // Extra null check to be safe
+            if (person.sessionInstance != null)
+                holder.sessionTimeView.setText(person.sessionInstance.computeDuration().toSeconds() + " seconds");
+            updateHandler.postDelayed(this::update, 1000);
         }
     }
 
