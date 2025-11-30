@@ -51,6 +51,8 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
             new ClockUpdater(person, holder);
         }
 
+        holder.totalTimeView.setText(timeToStr(person.totalTime));
+
         holder.expandedView.setVisibility(View.GONE);
 
         holder.itemView.setOnClickListener((View v) -> {
@@ -80,6 +82,7 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
         public TextView nameView;
         public View expandedView;
         public TextView sessionTimeView;
+        public TextView totalTimeView;
 
         public Button clockButton;
         public ViewHolder(@NonNull View view){
@@ -87,6 +90,7 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
             nameView = view.findViewById(R.id.nameView);
             expandedView = view.findViewById(R.id.expandedView);
             sessionTimeView = view.findViewById(R.id.sessionTimeView);
+            totalTimeView = view.findViewById(R.id.totalTimeView);
             clockButton = view.findViewById(R.id.clockInButton);
         }
     }
@@ -103,38 +107,46 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
 
         private void update(){
             // Extra null check to be safe
-            if (person.sessionInstance != null)
-                holder.sessionTimeView.setText(timeToStr(person.sessionInstance.computeDuration().toMillis()));
+            if (person.sessionInstance != null){
+                long sessionTime = person.sessionInstance.computeDuration().toMillis();
+                holder.sessionTimeView.setText(timeToStr(sessionTime));
+                holder.totalTimeView.setText(timeToStr(person.totalTime + sessionTime));
+            }
             updateHandler.postDelayed(this::update, 1000);
-        }
-
-        public String timeToStr(long time){
-            // Convert to seconds
-            time /= 1000;
-            long seconds = time % 60;
-            long minutes = (time / 60) % 60;
-            long hours = time / 3600;
-
-            StringBuilder builder = new StringBuilder();
-            // Show hours if more than one
-            if(hours > 0){
-                builder.append(hours);
-                builder.append(" hours ");
-            }
-            // Always show minutes
-            builder.append(minutes);
-            builder.append(" minutes ");
-            // Only show seconds up to 15 minutes
-            if (minutes < 15){
-                builder.append(seconds);
-                builder.append(" seconds");
-            }
-
-            return builder.toString();
         }
     }
 
     public interface ClockOutListener {
         void clockButtonClicked(Person person);
+    }
+
+    private static String timeToStr(long time){
+        // Convert to seconds
+        time /= 1000;
+        long seconds = time % 60;
+        long minutes = (time / 60) % 60;
+        long hours = time / 3600;
+
+        StringBuilder builder = new StringBuilder();
+
+        // Show hours if more than one
+        if(hours > 0){
+            builder.append(hours);
+            builder.append(" hours ");
+        }
+
+        // Only show minutes if over 1 minute and under 15 hours
+        if ((minutes > 0 || hours > 0) && hours < 15){
+            builder.append(minutes);
+            builder.append(" minutes ");
+        }
+
+        // Only show seconds up to 15 minutes
+        if (minutes < 15){
+            builder.append(seconds);
+            builder.append(" seconds");
+        }
+
+        return builder.toString();
     }
 }
