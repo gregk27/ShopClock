@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +109,13 @@ public class FirebaseDB {
 
             // Update document
             sessionCollection.document(session.ID.getId()).set(session);
+
+            // Update person total time
+            if (session.savedDuration != null)
+                person.totalTime += session.savedDuration;
+            else
+                person.totalTime += session.computeDuration().toMillis();
+            peopleCollection.document(person.ID.getId()).set(person);
         });
 
         // Clear current session
