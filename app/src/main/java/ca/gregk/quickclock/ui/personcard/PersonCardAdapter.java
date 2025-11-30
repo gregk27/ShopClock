@@ -104,8 +104,33 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
         private void update(){
             // Extra null check to be safe
             if (person.sessionInstance != null)
-                holder.sessionTimeView.setText(person.sessionInstance.computeDuration().toSeconds() + " seconds");
+                holder.sessionTimeView.setText(timeToStr(person.sessionInstance.computeDuration().toMillis()));
             updateHandler.postDelayed(this::update, 1000);
+        }
+
+        public String timeToStr(long time){
+            // Convert to seconds
+            time /= 1000;
+            long seconds = time % 60;
+            long minutes = (time / 60) % 60;
+            long hours = time / 3600;
+
+            StringBuilder builder = new StringBuilder();
+            // Show hours if more than one
+            if(hours > 0){
+                builder.append(hours);
+                builder.append(" hours ");
+            }
+            // Always show minutes
+            builder.append(minutes);
+            builder.append(" minutes ");
+            // Only show seconds up to 15 minutes
+            if (minutes < 15){
+                builder.append(seconds);
+                builder.append(" seconds");
+            }
+
+            return builder.toString();
         }
     }
 
