@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import ca.gregk.quickclock.FirebaseDB;
 import ca.gregk.quickclock.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
@@ -24,10 +25,19 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         homeViewModel.getAmPm().observe(getViewLifecycleOwner(), binding.amPmView::setText);
         homeViewModel.getTime().observe(getViewLifecycleOwner(), binding.clockView::setText);
         homeViewModel.getDate().observe(getViewLifecycleOwner(), binding.dateText::setText);
+
+        // Set counter for number of people in the shop
+        FirebaseDB.getInstance().getClockedIn().observe(getViewLifecycleOwner(), (clockedIn) -> {
+            int people = clockedIn.size();
+            if (people == 1)
+                textView.setText("1 person in the shop.");
+            else
+                textView.setText(people + " people in the shop.");
+        });
+
         return root;
     }
 

@@ -12,11 +12,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import ca.gregk.quickclock.FirebaseDB;
 import kotlinx.coroutines.scheduling.CoroutineScheduler;
 
 public class HomeViewModel extends ViewModel {
-
-    private final MutableLiveData<String> mText;
 
     private final MutableLiveData<String> timeText;
     private final MutableLiveData<String> ampmText;
@@ -28,9 +27,6 @@ public class HomeViewModel extends ViewModel {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE MMMM dd, yyyy");
 
     public HomeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
-
         timeText = new MutableLiveData<>();
         timeText.setValue("00:00");
 
@@ -61,9 +57,6 @@ public class HomeViewModel extends ViewModel {
         clockTicker.postDelayed(this::updateAndSchedule, 60 * 1000);
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
     public LiveData<String> getTime() { return timeText; }
     public LiveData<String> getAmPm() { return ampmText; }
     public LiveData<String> getDate() { return dateText; }
